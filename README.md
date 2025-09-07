@@ -8,14 +8,13 @@ It is designed with clean architecture principles (SOLID) to make adding new min
 ## ✨ Features
 
 - **Framework Core**
-  - Modular `IGame` interface for all mini-games.
-  - Centralized `GameFrameworkManager` to register, start, and stop games.
-  - Shared `GameContext` that provides access to common services (Save, Events, UI, Scene Management).
+  - Modular `IMiniGame` interface for all mini-games.
+  - Centralized `GameFrameworkManager` to access core managers and register, start, and stop games.
   - Event-driven communication via a lightweight `EventManager` implementing `IEventBus`.
 
 - **Mini-Games**
-  - **Tic-Tac-Toe**: Classic 3x3 board game with turn management and win detection.
-  - **Memory Match (Find the Pair)**: Flip and match pairs of cards with randomized layouts.
+  - **Tic-Tac-Toe**: Classic 3x3 board game with turn management and win detection.(not implemented)
+  - **Memory Match (Find the Pair)**: Flip and match pairs of cards with randomized layouts. (Not implemented)
 
 - **Core Systems**
   - `SaveManager`: JSON + basic encryption, saves player progress to `persistentDataPath`.
