@@ -1,9 +1,9 @@
 
-namespace Games
+namespace GFrame.Games
 {
     public interface IMiniGame
     {
-        void Initialize(GameContext context);
+        void Initialize(GameConfig gameConfig);
         void StartGame();
         void EndGame();
         void CleanUp();

@@ -1,6 +1,7 @@
+using GFrame.Data;
 using UnityEngine;
 
-namespace Data
+namespace TicTacToe.Data
 {
     [System.Serializable]
     public class TicTacToeSave : IGameSaveData

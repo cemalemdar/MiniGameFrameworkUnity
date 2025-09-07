@@ -1,5 +1,7 @@
 
-namespace TicTacToeLogic
+using UnityEngine;
+
+namespace TicTacToe.Game
 {
     public class WinChecker
     {

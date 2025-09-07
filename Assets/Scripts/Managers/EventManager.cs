@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using Events;
+﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
+using GFrame.Events;
 
-namespace Managers
+namespace GFrame.Managers
 {
-    public class EventManager
+    public class EventManager : MonoBehaviour, IEventManager
     {
         public class EventHandlers<EventType> where EventType : CustomEvent
         {
-            // Per-event-type handler storage
             private List<Action<EventType>> handlers = new List<Action<EventType>>();
             private static EventHandlers<EventType> _instance = null;
             private static EventHandlers<EventType> instance { get => _instance ?? (_instance = new EventHandlers<EventType>()); }
@@ -39,24 +39,34 @@ namespace Managers
             }
         }
 
-        public static void Register<EventType>(Action<EventType> handler) where EventType : CustomEvent
+        public static void RegisterHandler<EventType>(Action<EventType> handler) where EventType : CustomEvent
         {
             EventHandlers<EventType>.Register(handler);
         }
 
-        public static void Unregister<EventType>(Action<EventType> handler) where EventType : CustomEvent
+        public static void UnregisterHandler<EventType>(Action<EventType> handler) where EventType : CustomEvent
         {
             EventHandlers<EventType>.Unregister(handler);
         }
 
-        public static void Send<EventType>(EventType eventData) where EventType : CustomEvent
+        public static void SendEvent<EventType>(EventType eventData) where EventType : CustomEvent
         {
             EventHandlers<EventType>.Handle(eventData);
         }
 
+        public void Register<EventType>(Action<EventType> handler) where EventType : CustomEvent
+        {
+            RegisterHandler<EventType>(handler);
+        }
 
+        public void Unregister<EventType>(Action<EventType> handler) where EventType : CustomEvent
+        {
+            UnregisterHandler<EventType>(handler);
+        }
+
+        public void Send<EventType>(EventType eventData) where EventType : CustomEvent
+        {
+            SendEvent<EventType>(eventData);
+        }
     }
 }
-
-
-

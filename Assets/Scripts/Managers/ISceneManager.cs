@@ -1,5 +1,5 @@
 
-namespace Managers
+namespace GFrame.Managers
 {
     public interface ISceneManager
     {

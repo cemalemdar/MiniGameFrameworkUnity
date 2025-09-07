@@ -1,31 +1,24 @@
-using System.Collections.Generic;
 using System.IO;
-using Data;
+using GFrame.Data;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Managers
+namespace GFrame.Managers
 {
-    public class SaveManager
+    public class SaveManager : MonoBehaviour, ISaveManager
     {
-        private static SaveManager _instance;
-        public static SaveManager Instance => _instance ??= new SaveManager();
-
+        [SerializeField] private string playerID = "default-player";
         private static string SaveFilePath => Path.Combine(Application.persistentDataPath, "save_data.txt");
         private SaveData saveData;
+        public SaveData SaveData => saveData;
 
-        private SaveManager()
+        public void Start()
         {
             Load();
 
             // If no save data exists, create a new one
             if (saveData == null)
-                CreateNewSaveData();
-        }
-
-        private void CreateNewSaveData()
-        {
-            saveData = new SaveData(System.Guid.NewGuid().ToString());
-            Save();
+                CreateNewSave();
         }
 
         public void Save()
@@ -37,11 +30,17 @@ namespace Managers
             Debug.Log($"Saved to: {SaveFilePath}");
         }
 
-        public void SaveGameData(IGameSaveData gameSaveData)
+        public void Save(string gameID, IGameSaveData gameSaveData)
         {
-            string gameSave;
-            // TODO get type of game save
-            //saveData.gameProgress.
+            if(saveData.gameProgress.TryGetValue(gameID, out IGameSaveData existingSave))
+            {
+                // overwrite
+                saveData.gameProgress[gameID] = gameSaveData;
+                return;
+            }
+
+            saveData.gameProgress.Add(gameID, gameSaveData);
+            Save();
         }
 
         public void Load()
@@ -59,11 +58,19 @@ namespace Managers
             Debug.Log("Save data loaded.");
         }
 
-        public SaveData GetSaveData() => saveData;
-        public void SetSaveData(SaveData newData)
+        public void CreateNewSave()
         {
-            saveData = newData;
+            saveData = new SaveData(playerID);
             Save();
         }
+
+#if UNITY_EDITOR
+        [Button]
+        private void ClearSaveData()
+        {
+            Debug.Log("Deleting Save File");
+            File.Delete(SaveFilePath);
+        }
+#endif
     }
 }

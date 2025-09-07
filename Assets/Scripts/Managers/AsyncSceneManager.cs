@@ -1,60 +1,76 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Events;
-using Games;
-using Sirenix.OdinInspector;
+using GFrame.Events;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Managers
+namespace GFrame.Managers
 {
-    public class AsyncSceneManager : SerializedMonoBehaviour, ISceneManager
+    public class AsyncSceneManager : MonoBehaviour, ISceneManager
     {
-        [SerializeField] private Dictionary<GameType, string> sceneNames;
-
-        private static AsyncSceneManager _instance;
-        public static AsyncSceneManager Instance => _instance ??= new AsyncSceneManager();
-
+        // Tracks currently loaded scene names
+        private HashSet<string> loadedScenes = new HashSet<string>();
 
         private void OnEnable()
         {
-            EventManager.Register<LoadSceneEvent>(OnLoadScene);
+            EventManager.RegisterHandler<LoadSceneEvent>(OnLoadScene);
         }
 
         private void OnDisable()
         {
-            EventManager.Unregister<LoadSceneEvent>(OnLoadScene);
+            EventManager.UnregisterHandler<LoadSceneEvent>(OnLoadScene);
         }
 
         private void OnLoadScene(LoadSceneEvent ev)
         {
-            // Get scene name from dictionary
-            string scene;
-            if (sceneNames.TryGetValue(ev.gameType, out scene))
-            {
-                LoadScene(scene);
-            }
-
-            else throw new Exception($"No scene found in sceneNames dictionary {sceneNames} ");
             
-        }
+            LoadScene(ev.sceneName);
 
+        }
 
         private IEnumerator LoadAsyncSceneAdditive(string sceneName)
         {
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
             // Wait until the asynchronous scene fully loads
             while (!asyncLoad.isDone)
             {
                 yield return null;
             }
 
+            loadedScenes.Add(sceneName);
+            EventManager.SendEvent(SceneLoadedEvent.Create(sceneName));
+            Debug.Log($"Loaded scene: {sceneName}");
         }
 
         public void LoadScene(string sceneName)
         {
             StartCoroutine(LoadAsyncSceneAdditive(sceneName));
+        }
+
+        private IEnumerator UnloadAsyncScene(string sceneName)
+        {
+            if (!loadedScenes.Contains(sceneName))
+            {
+                Debug.LogWarning($"Scene {sceneName} is not loaded, cannot unload.");
+                yield break;
+            }
+
+            AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(sceneName);
+
+            while (!asyncUnload.isDone)
+            {
+                yield return null;
+            }
+
+            loadedScenes.Remove(sceneName);
+            EventManager.SendEvent(SceneUnloadedEvent.Create(sceneName));
+            Debug.Log($"Unloaded scene: {sceneName}");
+        }
+
+        public void UnloadScene(string sceneName)
+        {
+            StartCoroutine(UnloadAsyncScene(sceneName));
         }
     }
 }

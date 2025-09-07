@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System.IO;
-using Games;
+using GFrame.Games;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
@@ -9,12 +9,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 
-public class DemoSceneCreator : OdinEditorWindow
+public class MiniGameCreator : OdinEditorWindow
 {
-    [MenuItem("Tools/Demo/Create Demo Scene")]
+    [MenuItem("Tools/Demo/Mini Game Creator")]
     private static void OpenWindow()
     {
-        GetWindow<DemoSceneCreator>("Demo Scene Creator").Show();
+        GetWindow<MiniGameCreator>("Mini Game Creator").Show();
     }
 
     [Title("Output")]
@@ -24,14 +24,14 @@ public class DemoSceneCreator : OdinEditorWindow
 
     [SuffixLabel(".unity", true)]
     [Tooltip("Scene file name (without extension).")]
-    public string SceneName = "DemoScene";
+    public string SceneName = "MiniGameScene";
 
     [Title("Demo Root")]
     [Tooltip("Name of the root GameObject that will hold the DemoGame component.")]
     public string RootObjectName = "Demo Game";
 
     [Button(ButtonSizes.Large)]
-    [GUIColor(0.2f, 0.8f, 0.4f)]
+    [GUIColor(0.2f, 0.8f, 0.2f)]
     [PropertySpace(12)]
     public void CreateDemoScene()
     {
@@ -39,7 +39,7 @@ public class DemoSceneCreator : OdinEditorWindow
         var demoGameType = typeof(DemoGameSetup);
         if (demoGameType == null)
         {
-            Debug.LogError("[DemoSceneCreator] DemoGame component type not found.");
+            Debug.LogError("DemoGame component type not found.");
             return;
         }
 
@@ -57,10 +57,10 @@ public class DemoSceneCreator : OdinEditorWindow
 
         // Save scene to disk
         string assetPath = Path.Combine(SceneFolder, SceneName + ".unity").Replace("\\", "/");
-        bool ok = EditorSceneManager.SaveScene(newScene, assetPath, true);
-        if (!ok)
+        bool couldSave = EditorSceneManager.SaveScene(newScene, assetPath, true);
+        if (!couldSave)
         {
-            Debug.LogError("[DemoSceneCreator] Failed to save scene.");
+            Debug.LogError("Failed to save scene.");
             return;
         }
 

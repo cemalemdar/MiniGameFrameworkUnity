@@ -1,32 +1,31 @@
 using System.Collections.Generic;
-using UnityEngine;
-
-namespace Managers
+using TicTacToe.Events;
+namespace GFrame.Managers
 {
     public class TurnManager<TPlayer>
     {
-        private readonly List<TPlayer> players;
-        private int currentIndex;
+        private List<TPlayer> players;
+        private int currentPlayerIndex;
 
-        public TPlayer CurrentTurn => players[currentIndex];
+        public TPlayer CurrentPlayer => players[currentPlayerIndex];
 
         public TurnManager(List<TPlayer> players)
         {
-            if (players == null || players.Count == 0)
-                throw new System.ArgumentException("Players list cannot be empty.");
-
             this.players = players;
-            currentIndex = 0;
+            currentPlayerIndex = 0;
         }
 
         public void NextTurn()
         {
-            currentIndex = (currentIndex + 1) % players.Count;
+            currentPlayerIndex++;
+            currentPlayerIndex = currentPlayerIndex >= players.Count ? 0 : currentPlayerIndex;
+
+            EventManager.SendEvent(TurnChangedEvent.Create());
         }
 
         public void Reset()
         {
-            currentIndex = 0;
+            currentPlayerIndex = 0;
         }
     }
 }

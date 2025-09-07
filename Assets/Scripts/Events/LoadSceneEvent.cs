@@ -1,14 +1,12 @@
-using Games;
-
-namespace Events
+namespace GFrame.Events
 {
     public class LoadSceneEvent : CustomEvent
     {
-        public GameType gameType;
-        public static LoadSceneEvent Create(GameType gameType)
+        public string sceneName;
+        public static LoadSceneEvent Create(string sceneName)
         {
             LoadSceneEvent loadSceneEvent = new LoadSceneEvent();
-            loadSceneEvent.gameType = gameType;
+            loadSceneEvent.sceneName = sceneName;
             return loadSceneEvent;
         }
     }

@@ -1,14 +1,14 @@
-using Games;
+using GFrame.Games;
 
-namespace Events
+namespace GFrame.Events
 {
     public class LoadGameEvent : CustomEvent
     {
-        public GameType gameType;
-        public static LoadGameEvent Create(GameType gameType)
+        public GameConfig gameConfig;
+        public static LoadGameEvent Create(GameConfig gameConfig)
         {
             LoadGameEvent loadGameEvent = new LoadGameEvent();
-            loadGameEvent.gameType = gameType;
+            loadGameEvent.gameConfig = gameConfig;
             return loadGameEvent;
         }
     }

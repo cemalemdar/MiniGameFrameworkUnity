@@ -1,4 +1,4 @@
-namespace Events
+namespace GFrame.Events
 {
     public class GameOverEvent : CustomEvent
     {

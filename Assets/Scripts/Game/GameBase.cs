@@ -1,15 +1,21 @@
-
-namespace Games
+namespace GFrame.Games
 {
     public abstract class BaseGame : IMiniGame
     {
-        protected GameContext context { get; private set; }
         protected bool isGameOver;
+        protected GameConfig gameConfig;
 
-        public virtual void Initialize(GameContext context)
+        /// <summary>
+        /// Unique identifier for this game instance.
+        /// </summary>
+
+        public string GameId { get; private set; }
+
+        public virtual void Initialize(GameConfig game)
         {
-            this.context = context;
             isGameOver = false;
+            gameConfig = game;
+
             OnInitialize();
         }
 
@@ -28,12 +34,12 @@ namespace Games
 
         public virtual void CleanUp()
         {
-
         }
 
         public virtual void Restart()
         {
-            Initialize(context);
+            if(!isGameOver) EndGame();
+            Initialize(gameConfig);
             StartGame();
         }
 
@@ -41,9 +47,5 @@ namespace Games
         protected abstract void OnInitialize();
         protected abstract void OnStartGame();
         protected abstract void OnEndGame();
-
-        
     }
 }
-
-
